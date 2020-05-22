@@ -40,16 +40,14 @@ SPICE4MERTIS is a Python 3.5.x package that uses a set of standard Python librar
 Installation
 ------------
 
-Then run ``pip install spival`` to install from pypi.
-
-If you wish to install spival from source first download or clone the project. Then run ``python setup.py install``.
-To uninstall run ``pip uninstall spival``.
+Download this repository and then run ``pip install -e .`` or ``python setup.py install``.
+SPICE4MERTIS requires the BepiColombo SPICE Kernel Dataset and a working meta-kernel.
 
 
 Usage
 -----
 
-spival requires the BepiColombo SPICE Kernel Dataset and a working meta-kernel.
+Run spice4mertis -h to learn how to use it.
 
 
 Known Working Environments:
