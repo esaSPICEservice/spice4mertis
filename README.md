@@ -40,7 +40,7 @@ SPICE4MERTIS is a Python 3.5.x package that uses a set of standard Python librar
 Installation
 ------------
 
-Download this repository and then run ``pip install -e .`` or ``python setup.py install``.
+Download this repository and then run ``pip install -e .`` 
 SPICE4MERTIS requires the BepiColombo SPICE Kernel Dataset and a working meta-kernel.
 
 
