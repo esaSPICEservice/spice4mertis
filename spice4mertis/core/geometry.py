@@ -60,7 +60,7 @@ def geometry(et, bsight, target, frame, sensor, observer=''):
     visible = spiceypy.fovtrg(sensor, target, 'ELLIPSOID', frame, 'LT+S', observer, et)
 
     if not visible:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     tarid = spiceypy.bodn2c(target)
 
@@ -166,7 +166,7 @@ def geometry(et, bsight, target, frame, sensor, observer=''):
         return tarlon, tarlat, sublon, sublat, sunlon, sunlat, tardis, tarang, ltime, phase, emissn, incdnc
 
     except:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
 
 def pixel_geometry(et, sensor, pix_line,pix_sample, target, frame, observer=''):
