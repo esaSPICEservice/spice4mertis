@@ -50,7 +50,7 @@ def main():
     parser.add_argument('-fs', '--finishtime',
                     help='Input UTC finish time in YYYY-MM-DDTHH:MM:SS. Default is start time.',
                     default='')
-    parser.add_argument('-sp', '--step',
+    parser.add_argument('-sp', '--step',type=int,
                     help='Step for the time interval in seconds. Default is 60 seconds.',
                     default=60)
     parser.add_argument('-ta', '--target',
