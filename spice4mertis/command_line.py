@@ -63,10 +63,10 @@ def main():
                     help='Specify sensor. Default is MPO_MERTIS_TIS_SPACE.',
                     default='MPO_MERTIS_TIR_PLANET')
     parser.add_argument('-pl', '--pixelline',
-                    help='Specify sensor pixel sample (x coordinate). Default is center of CCD.',
+                    help='Specify sensor pixel sample (x or spatial coordinates). Default is 80, center of CCD.',
                     default='')
     parser.add_argument('-ps', '--pixelsample',
-                    help='Specify sensor pixel sample (x coordinate). Default is center of CCD.',
+                    help='Specify sensor pixel sample (y or spectral coordinates). Default is 60, center of CCD.',
                     default='')
     args = parser.parse_args()
 

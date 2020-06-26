@@ -7,11 +7,14 @@ from spice4mertis.utils.sensor import ccd_center, pixel_lines, pixel_samples
 
 def run(mk, time_start='', time_finish='', step=60, target='MERCURY',
         frame='', sensor='MPO_MERTIS_TIR_PLANET', pixel_line='',
-        pixel_sample='', observer='MPO'):
+        pixel_sample='', observer='MPO',
+        return_output=None):
 
     spiceypy.furnsh(mk)
 
     target = target.upper()
+
+    if not return_output : return_output = False
     if not time_start: time_start = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
     if not frame: frame = f'IAU_{target}'
     if not time_finish: time_finish = time_start
@@ -52,14 +55,26 @@ def run(mk, time_start='', time_finish='', step=60, target='MERCURY',
     # emission angle intersection
     # incidence angle intersection
 
-    with open('spice4mertis.csv', 'w') as o:
-        o.write('utc,et,pixlin,pixsam,tarlon,tarlat,sublon,sublat,sunlon,sunlat,tardis,tarang,ltime,phase,emissn,incdnc\n')
+    if return_output:
+        output = []
+        output.append(['utc','et','pixlin','pixsam','tarlon','tarlat','sublon','sublat','sunlon','sunlat','tardis','tarang','ltime','phase','emissn','incdnc'])
         for et in interval:
             utc = spiceypy.et2utc(et, 'ISOC', 3)
             for line in pixel_line:
                 for sample in pixel_sample:
                     pixelGeometry = pixel_geometry(et, sensor, line, sample, target, frame, observer=observer)
-                    print(utc,line,sample,str(pixelGeometry)[1:-1].replace(',',' '))
-                    o.write(f'{utc},{et},{line},{sample},{str(pixelGeometry)[1:-1].replace(" ","")}\n')
-    return
+                    output.append([utc,et,line,sample,pixelGeometry])
+        return output
+    else : 
+
+        with open('spice4mertis.csv', 'w') as o:
+            o.write('utc,et,pixlin,pixsam,tarlon,tarlat,sublon,sublat,sunlon,sunlat,tardis,tarang,ltime,phase,emissn,incdnc\n')
+            for et in interval:
+                utc = spiceypy.et2utc(et, 'ISOC', 3)
+                for line in pixel_line:
+                    for sample in pixel_sample:
+                        pixelGeometry = pixel_geometry(et, sensor, line, sample, target, frame, observer=observer)
+                        print(utc,line,sample,str(pixelGeometry)[1:-1].replace(',',' '))
+                        o.write(f'{utc},{et},{line},{sample},{str(pixelGeometry)[1:-1].replace(" ","")}\n')
+        return
 
