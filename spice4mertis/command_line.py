@@ -50,7 +50,7 @@ def main():
     parser.add_argument('-fs', '--finishtime',
                     help='Input UTC finish time in YYYY-MM-DDTHH:MM:SS. Default is start time.',
                     default='')
-    parser.add_argument('-sp', '--step',
+    parser.add_argument('-sp', '--step',type=int,
                     help='Step for the time interval in seconds. Default is 60 seconds.',
                     default=60)
     parser.add_argument('-ta', '--target',
@@ -63,10 +63,10 @@ def main():
                     help='Specify sensor. Default is MPO_MERTIS_TIS_SPACE.',
                     default='MPO_MERTIS_TIR_PLANET')
     parser.add_argument('-pl', '--pixelline',
-                    help='Specify sensor pixel sample (x coordinate). Default is center of CCD.',
+                    help='Specify sensor pixel sample (x or spatial coordinates). Default is 80, center of CCD.',
                     default='')
     parser.add_argument('-ps', '--pixelsample',
-                    help='Specify sensor pixel sample (x coordinate). Default is center of CCD.',
+                    help='Specify sensor pixel sample (y or spectral coordinates). Default is 60, center of CCD.',
                     default='')
     args = parser.parse_args()
 

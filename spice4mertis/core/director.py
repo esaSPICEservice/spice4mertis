@@ -7,11 +7,41 @@ from spice4mertis.utils.sensor import ccd_center, pixel_lines, pixel_samples
 
 def run(mk, time_start='', time_finish='', step=60, target='MERCURY',
         frame='', sensor='MPO_MERTIS_TIR_PLANET', pixel_line='',
-        pixel_sample='', observer='MPO'):
+        pixel_sample='', observer='MPO',
+        return_output=None):
+    """run.
+
+    Parameters
+    ----------
+    mk : string
+        metakernel path
+    time_start : string
+                Input UTC start time in YYYY-MM-DDTHH:MM:SS
+    time_finish :
+                Finis UTC start time in YYYY-MM-DDTHH:MM:SS
+    step :
+                Step for the time interval in seconds. Default is 60 seconds.
+    target :
+                Target of the observation. Default is MERCURY.
+    frame :
+                Specify object reference. Default is IAU_<TARGET>
+    sensor :
+                Specify sensor. Default is MPO_MERTIS_TIS_SPACE.
+    pixel_line :
+                Specify sensor pixel sample (x or spatial coordinates). Default is 80,center of CCD .
+    pixel_sample :
+                Specify sensor pixel sample (y or spectral coordinates). Default is 60,center of CCD.
+    observer :
+        observer
+    return_output :
+        return_output
+    """
 
     spiceypy.furnsh(mk)
 
     target = target.upper()
+
+    if not return_output : return_output = False
     if not time_start: time_start = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
     if not frame: frame = f'IAU_{target}'
     if not time_finish: time_finish = time_start
@@ -52,14 +82,28 @@ def run(mk, time_start='', time_finish='', step=60, target='MERCURY',
     # emission angle intersection
     # incidence angle intersection
 
-    with open('spice4mertis.csv', 'w') as o:
-        o.write('utc,et,pixlin,pixsam,tarlon,tarlat,sublon,sublat,sunlon,sunlat,tardis,tarang,ltime,phase,emissn,incdnc\n')
+    if return_output:
+        output_dict = {'columns': ['utc','et','pixlin','pixsam','tarlon','tarlat','sublon','sublat','sunlon','sunlat',
+                                   'tardis','tarang','ltime','phase','emissn','incdnc'] }
+        output = []
         for et in interval:
             utc = spiceypy.et2utc(et, 'ISOC', 3)
             for line in pixel_line:
                 for sample in pixel_sample:
                     pixelGeometry = pixel_geometry(et, sensor, line, sample, target, frame, observer=observer)
-                    print(utc,line,sample,str(pixelGeometry)[1:-1].replace(',',' '))
-                    o.write(f'{utc},{et},{line},{sample},{str(pixelGeometry)[1:-1].replace(" ","")}\n')
-    return
+                    output.append([utc,et,line,sample,*pixelGeometry])
+        output_dict['data'] = np.array(output)
+        return output_dict
+    else : 
+
+        with open('spice4mertis.csv', 'w') as o:
+            o.write('utc,et,pixlin,pixsam,tarlon,tarlat,sublon,sublat,sunlon,sunlat,tardis,tarang,ltime,phase,emissn,incdnc\n')
+            for et in interval:
+                utc = spiceypy.et2utc(et, 'ISOC', 3)
+                for line in pixel_line:
+                    for sample in pixel_sample:
+                        pixelGeometry = pixel_geometry(et, sensor, line, sample, target, frame, observer=observer)
+                        print(utc,line,sample,str(pixelGeometry)[1:-1].replace(',',' '))
+                        o.write(f'{utc},{et},{line},{sample},{str(pixelGeometry)[1:-1].replace(" ","")}\n')
+        return
 

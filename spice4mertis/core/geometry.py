@@ -4,7 +4,8 @@ import numpy as np
 
 
 def pixel_boresight(sensor, i, j):
-
+    """Generate desired pixel(i,j) boresight : actually on centers.
+    """
     #
     # We check if the resolution of the camera has been provided as an input
     # if not we try to obtain the resolution of the camera from the IK
@@ -24,35 +25,39 @@ def pixel_boresight(sensor, i, j):
     x = np.linspace(bounds[0][0], bounds[2][0], nx)
     y = np.linspace(bounds[0][1], bounds[2][1], ny)
 
-    return [x[int(i)], y[int(j)], bsight[2]]
+    return [x[int(i)], y[int(0)], bsight[2]]
 
 
 def geometry(et, bsight, target, frame, sensor, observer=''):
+    """Return geometry of interesction of given
 
+    sensor + boresight to target at et time
+
+
+    Time tag [UTC]
+    pixel id [(x,y)]
+    corner id [(x,y)]
+
+    Requested geometry:
+
+    lat lon intersection (planetocentric)
+    lat lon subspacecraft
+    lat lon subsolar
+    target distance intersection
+    target angular diameter
+    local solar time intersection
+    phase angle intersection
+    emission angle intersection
+    incidence angle intersection
+ 
+    We retrieve the camera information using GETFOV. More info available:
+    
+      https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/getfov_c.html
+    
+    """
     if not observer:
         observer = sensor
 
-    # Time tag [UTC]
-    # pixel id [(x,y)]
-    # corner id [(x,y)]
-
-    # Requested geometry
-
-    # lat lon intersection (planetocentric)
-    # lat lon subspacecraft
-    # lat lon subsolar
-    # target distance intersection
-    # target angular diameter
-    # local solar time intersection
-    # phase angle intersection
-    # emission angle intersection
-    # incidence angle intersection
-
-    #
-    # We retrieve the camera information using GETFOV. More info available:
-    #
-    #   https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/getfov_c.html
-    #
     sensor_id = spiceypy.bodn2c(sensor)
     (shape, sensor_frame, ibsight, vectors, bounds) = spiceypy.getfov(sensor_id, 100)
 
@@ -60,7 +65,7 @@ def geometry(et, bsight, target, frame, sensor, observer=''):
     visible = spiceypy.fovtrg(sensor, target, 'ELLIPSOID', frame, 'LT+S', observer, et)
 
     if not visible:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     tarid = spiceypy.bodn2c(target)
 
@@ -166,7 +171,7 @@ def geometry(et, bsight, target, frame, sensor, observer=''):
         return tarlon, tarlat, sublon, sublat, sunlon, sunlat, tardis, tarang, ltime, phase, emissn, incdnc
 
     except:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
 
 def pixel_geometry(et, sensor, pix_line,pix_sample, target, frame, observer=''):
